@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  const serverPort = process.env.BOOKING_CORE_PORT
 
   const config = new DocumentBuilder()
     .setTitle('Booking')
@@ -12,10 +15,10 @@ async function bootstrap() {
     .addTag('booking')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/swagger', app, document);
 
-  await app.listen(process.env.BOOKING_PORT).then(value => {
-    console.log("Booking app start on port ", process.env.BOOKING_CORE_PORT);
+  await app.listen(serverPort).then(value => {
+    console.log("Booking app start on port ", serverPort);
   });
 }
 bootstrap();

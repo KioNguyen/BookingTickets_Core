@@ -51,6 +51,14 @@ export class EventsService {
   }
 
 
+  async getEvent(_id: Types.ObjectId): Promise<EventDocument> {
+    const event = this.findUserById(_id);
+    if (!event) {
+      throw new NotFoundException('User not found');
+    }
+    return event;
+  }
+
   async findUserById(_id: Types.ObjectId): Promise<EventDocument> {
     const event = this.eventsRepository.findUserById(_id);
     if (!event) {

@@ -1,5 +1,4 @@
 
-import { DetailUserDTO } from 'src/users/dto/detail-user.dto';
 import { IDetailUser } from 'src/users/entities/user-details.entity';
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 

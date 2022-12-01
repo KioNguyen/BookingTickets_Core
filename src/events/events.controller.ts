@@ -23,8 +23,15 @@ export class EventsController {
   }
 
   @Get()
-  async getAllEvent(): Promise<IDetailEvent[]> {
+  async getAllEvents(): Promise<IDetailEvent[]> {
     return await this.eventsService.getAllEvents();
+  }
+
+
+  @Get("/:id")
+  async getEvent(@Param("id") id: Types.ObjectId): Promise<IDetailEvent> {
+    Utils.idValidObjectId(id)
+    return await this.eventsService.getEvent(id);
   }
 
   @ApiBadRequestResponse({ description: "Event ID is not valid" })

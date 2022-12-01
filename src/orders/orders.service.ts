@@ -4,12 +4,17 @@ import { OrdersRepository } from './orders.repository';
 import { OrderDocument } from './_schemas/order.schema';
 import { CreateOrderDTO } from './dto/create-order.dto';
 import { IDetailOrder } from './interface/order-details.interface';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { TicketsService } from 'src/tickets/tickets.service';
+import { EventsService } from 'src/events/events.service';
 import * as Utils from '../utils/utils'
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly ordersRepository: OrdersRepository) { }
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly ticketsService: TicketsService,
+    private readonly eventsService: EventsService
+  ) { }
 
   _getOrderDetails(createOrderDTO: CreateOrderDTO): CreateOrderDTO {
     return createOrderDTO;
@@ -19,9 +24,20 @@ export class OrdersService {
     Utils.idValidObjectId(orderInfor.owner);
     Utils.idValidObjectId(orderInfor.event);
     Utils.idValidObjectId(orderInfor.ticket);
-    // orderInfor.published = Utils.isPublishedOrder(orderInfor.end_date);
-    // Utils.isValidDateOrder(orderInfor.start_date, orderInfor.end_date);
+    const ticket = await this.ticketsService.findTicketById(orderInfor.ticket);
+    if (ticket.total_quantity <= 0) {
+      throw new HttpException(`Ticket with id ${orderInfor.ticket} has no quantity`, HttpStatus.FORBIDDEN);
+    }
+    const event = await this.eventsService.findEventById(orderInfor.event);
+    if (!Utils.isPublishedEvent(event.end_date)) {
+      throw new HttpException(`Event with id ${orderInfor.event} is out of day`, HttpStatus.FORBIDDEN);
+    }
     const order = await this.ordersRepository.createOne(orderInfor);
+    if (order) {
+      await this.ticketsService.updateTicketQuantity(orderInfor.ticket);
+    }
+
+
     return order;
   }
 

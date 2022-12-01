@@ -22,12 +22,14 @@ export class OrdersController {
     return this.ordersService._getOrderDetails(newOrder);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllOrder(): Promise<CreateOrderDTO[]> {
     return await this.ordersService.getAllOrders();
   }
 
 
+  @UseGuards(JwtAuthGuard)
   @Get("/:id")
   async getOrder(@Param("id") id: Types.ObjectId): Promise<CreateOrderDTO> {
     Utils.idValidObjectId(id)

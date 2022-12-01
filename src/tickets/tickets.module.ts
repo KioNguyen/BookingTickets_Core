@@ -13,6 +13,6 @@ import { UsersModule } from 'src/users/users.module';
   ],
   controllers: [TicketsController],
   providers: [TicketsService, TicketsRepository],
-  exports: [TicketsService],
+  exports: [TicketsService, TicketsRepository],
 })
 export class TicketsModule { }

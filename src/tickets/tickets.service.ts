@@ -29,7 +29,13 @@ export class TicketsService {
   async updateTicket(id: Types.ObjectId, ticketInfor: CreateTicketDTO): Promise<IDetailTicket> {
     // ticketInfor.published = Utils.isPublishedTicket(ticketInfor.end_date);
     // Utils.isValidDateTicket(ticketInfor.start_date, ticketInfor.end_date);
-
+    const oldTicket = await this.ticketsRepository.findById(id);
+    if (!oldTicket) {
+      throw new NotFoundException('Ticket not found');
+    }
+    if (oldTicket.total_quantity !== ticketInfor.total_quantity) {
+      ticketInfor.available_quantity = oldTicket.available_quantity + (ticketInfor.total_quantity - oldTicket.total_quantity)
+    }
     const ticket = await this.ticketsRepository.findOneAndUpdate(id, ticketInfor);
     if (!ticket) {
       throw new NotFoundException('Ticket not found');
@@ -74,4 +80,16 @@ export class TicketsService {
     }
     return ticket;
   }
+
+  async updateTicketQuantity(_id: Types.ObjectId): Promise<IDetailTicket> {
+    const ticket = await this.ticketsRepository.findById(_id);
+    if (!ticket) {
+      throw new NotFoundException('Ticket not found');
+    }
+    --ticket.available_quantity;
+    const ticketUpdated = await this.updateTicket(_id, ticket);
+    return ticketUpdated;
+  }
+
+
 }

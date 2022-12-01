@@ -41,4 +41,14 @@ export class EventsRepository {
     const result = await this.eventModel.findByIdAndUpdate(id, eventInfor, { new: true });
     return result;
   }
+
+  async updateMany(conditions: any, set: any) {
+    const result = await this.updateMany(conditions, set);
+    return result;
+  }
+
+  async getWithConditions(filter: any): Promise<EventDocument[]> {
+    const result = await this.eventModel.find(filter);
+    return result;
+  }
 }

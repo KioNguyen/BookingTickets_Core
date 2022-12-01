@@ -4,12 +4,12 @@ import { EventsRepository } from './events.repository';
 import { EventDocument } from './_schemas/event.schema';
 import { CreateEventDTO } from './dto/create-event.dto';
 import { IDetailEvent } from './interface/event-details.interface';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import * as Utils from './../utils/utils'
 
 @Injectable()
 export class EventsService {
   constructor(private readonly eventsRepository: EventsRepository) { }
-
 
   _getEventDetails({ id, slug, name, description, poster, start_date, end_date, published }: IDetailEvent): IDetailEvent {
     return { id, slug, name, description, poster, start_date, end_date, published };
@@ -57,5 +57,13 @@ export class EventsService {
       throw new NotFoundException('User not found');
     }
     return event;
+  }
+
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  updatePublishAllEvent() {
+    const nowDate = new Date().toISOString();
+    this.eventsRepository.updateMany({ end_date: { $lt: nowDate } }, { published: false });
+    this.eventsRepository.updateMany({ start_date: { $lt: nowDate, end_date: { $lt: nowDate } } }, { published: true });
   }
 }

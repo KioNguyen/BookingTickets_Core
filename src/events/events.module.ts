@@ -5,10 +5,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EventSchema } from 'src/events/_schemas/event.schema';
 import { EventsRepository } from './events.repository';
 import { UsersModule } from 'src/users/users.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: "Event", schema: EventSchema }]),
+    ScheduleModule.forRoot(),
     UsersModule
   ],
   controllers: [EventsController],

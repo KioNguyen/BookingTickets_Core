@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { DetailUserDTO } from 'src/users/dto/detail-user.dto';
 import { CreateUserDTO } from 'src/users/dto/create-user.dto';
 import { LoginUserDTO } from 'src/users/dto/login-user.dto';
@@ -6,6 +6,7 @@ import { IDetailUser } from 'src/users/entities/user-details.entity';
 import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ILoginDetail } from 'src/users/entities/login-response.entity';
+import { JwtAuthGuard } from './guards/jwt.guard';
 
 @ApiTags('Authentication')
 @Controller('api/auth')
@@ -23,6 +24,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('verify-jwt')
   @HttpCode(HttpStatus.OK)
   verifyJwt(@Body() payload: { jwt: string }) {

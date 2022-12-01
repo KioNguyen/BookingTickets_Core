@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { isValidObjectId, Types } from 'mongoose';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { AdminGuard, JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import * as Utils from 'src/utils/utils';
 
 @ApiTags('Users')
@@ -22,11 +22,14 @@ export class UsersController {
 
 
   @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @Get()
   async getAllUsers() {
     return await this.usersService.getAllUsers();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @ApiBadRequestResponse({ description: "User ID is not valid" })
   @Delete("/:id")
   async deleteUser(@Param("id") id: Types.ObjectId) {

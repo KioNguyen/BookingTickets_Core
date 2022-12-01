@@ -33,7 +33,7 @@ export class UsersService {
   }
 
   async removeUser(_id: Types.ObjectId): Promise<any> {
-    const user = this.usersRepository.findUserById(_id);
+    const user = await this.usersRepository.findUserById(_id);
     if (!user) {
       throw new NotFoundException('User not found');
     }

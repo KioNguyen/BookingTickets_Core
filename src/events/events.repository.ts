@@ -1,3 +1,4 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateEventDTO } from './dto/create-event.dto';
@@ -17,7 +18,7 @@ export class EventsRepository {
   }
 
 
-  async findUserById(_id: Types.ObjectId): Promise<any> {
+  async findById(_id: Types.ObjectId): Promise<any> {
     const result = this.eventModel.findById(_id);
     return result;
   }
@@ -37,9 +38,17 @@ export class EventsRepository {
     const result = await this.eventModel.findOne({ email: email });
     return result;
   }
-  async findOneAndUpdate(id: Types.ObjectId, eventInfor: IDetailEvent): Promise<IDetailEvent> {
-    const result = await this.eventModel.findByIdAndUpdate(id, eventInfor, { new: true });
-    return result;
+
+  async findOneAndUpdate(id: Types.ObjectId, eventInfor: CreateEventDTO): Promise<IDetailEvent> {
+    try {
+      const result = await this.eventModel.findByIdAndUpdate(id, eventInfor, { new: true });
+      return result;
+    } catch (error) {
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: error.message,
+      }, HttpStatus.FORBIDDEN);
+    }
   }
 
   async updateMany(conditions: any, set: any) {

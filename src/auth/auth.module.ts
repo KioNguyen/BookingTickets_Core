@@ -16,8 +16,8 @@ import { JwtStrategy } from './guards/jwt.strategy';
     PassportModule,
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: 'secret',
-        signOptions: { expiresIn: '3600s' },
+        secret: process.env.BOOKING_SECRET_KEY,
+        signOptions: { expiresIn: process.env.BOOKING_JWT_EXPIRE },
       }),
     }),
   ],

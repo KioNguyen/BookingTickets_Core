@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
 export class DetailUserDTO {
   @ApiProperty()
@@ -16,6 +17,7 @@ export class DetailUserDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @ApiProperty()

@@ -14,6 +14,7 @@ export const isPublishedEvent = (end_date: string): boolean => {
     const sEndTime = new Date(end_date).getTime();
     return sEndTime - sNowTime >= 0;
 }
+
 export const isValidDateEvent = (start_date: string, end_date: string): boolean => {
     const sStartTime = new Date(start_date).getTime();
     const sEndTime = new Date(end_date).getTime();

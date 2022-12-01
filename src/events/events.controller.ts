@@ -34,6 +34,8 @@ export class EventsController {
     return await this.eventsService.getEvent(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @ApiBadRequestResponse({ description: "Event ID is not valid" })
   @Put("/:id")
   async updateEvent(@Param("id") id: Types.ObjectId, @Body() event: IDetailEvent): Promise<IDetailEvent> {
@@ -41,6 +43,8 @@ export class EventsController {
     return await this.eventsService.updateEvent(id, event);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
   @ApiBadRequestResponse({ description: "Event ID is not valid" })
   @Delete("/:id")
   async deleteEvent(@Param("id") id: Types.ObjectId) {

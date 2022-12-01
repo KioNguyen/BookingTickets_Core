@@ -26,6 +26,9 @@ export class EventsService {
     eventInfor.published = Utils.isPublishedEvent(eventInfor.end_date);
     Utils.isValidDateEvent(eventInfor.start_date, eventInfor.end_date);
     const event = await this.eventsRepository.findOneAndUpdate(id, eventInfor);
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
     return event;
   }
 
@@ -35,15 +38,15 @@ export class EventsService {
   }
 
   async removeEvent(_id: Types.ObjectId): Promise<any> {
-    const event = this.eventsRepository.findUserById(_id);
+    const event = await this.eventsRepository.findById(_id);
     if (!event) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Event not found');
     }
     return await this.eventsRepository.removeUser(_id);
   }
 
   async findEventBySlug(email: string): Promise<EventDocument> {
-    const event = this.eventsRepository.findOne(email);
+    const event = await this.eventsRepository.findOne(email);
     if (!event) {
       throw new NotFoundException('Event not found');
     }
@@ -52,21 +55,20 @@ export class EventsService {
 
 
   async getEvent(_id: Types.ObjectId): Promise<EventDocument> {
-    const event = this.findUserById(_id);
+    const event = await this.findEventById(_id);
     if (!event) {
       throw new NotFoundException('User not found');
     }
     return event;
   }
 
-  async findUserById(_id: Types.ObjectId): Promise<EventDocument> {
-    const event = this.eventsRepository.findUserById(_id);
+  async findEventById(_id: Types.ObjectId): Promise<EventDocument> {
+    const event = await this.eventsRepository.findById(_id);
     if (!event) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Event not found');
     }
     return event;
   }
-
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   updatePublishAllEvent() {

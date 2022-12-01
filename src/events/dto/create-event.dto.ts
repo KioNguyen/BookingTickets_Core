@@ -21,7 +21,6 @@ export class CreateEventDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsDateString()
-
   start_date: string;
 
 

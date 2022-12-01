@@ -13,9 +13,6 @@ export class UsersRepository {
   ) { }
 
   async createOne(user: CreateUserDTO): Promise<UserDocument> {
-    console.log("🚀 ~ file: users.repository.ts:13 ~ UsersRepository ~ createOne ~ user", user)
-    // const result = this.userModel.create(user);
-    // return result;
     const newUser = new this.userModel(user);
     return newUser.save();
   }

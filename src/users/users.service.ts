@@ -12,14 +12,6 @@ export class UsersService {
   createUser(userInfor: CreateUserDTO): Promise<UserDocument> {
     const user = this.usersRepository.createOne(userInfor);
     return user;
-
-
-    // const newUser = new this.userModel({
-    //   name,
-    //   email,
-    //   password: hashedPassword,
-    // });
-    // return newUser.save();
   }
 
 

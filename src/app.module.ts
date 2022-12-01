@@ -7,13 +7,17 @@ import { ConfigModule } from '@nestjs/config';
 // Module
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { EventsModule } from './events/events.module';
+import { UsersService } from './users/users.service';
 
+// Service
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.BOOKING_CORE_DB),
     AuthModule,
-    UsersModule
+    UsersModule,
+    EventsModule
   ],
   controllers: [AppController],
   providers: [AppService],

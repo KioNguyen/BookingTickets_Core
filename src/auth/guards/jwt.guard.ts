@@ -18,3 +18,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
 }
+
+@Injectable()
+export class AdminGuard extends AuthGuard('jwt') {
+    constructor(private readonly usersService: UsersService) {
+        super()
+    }
+
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const valid = await super.canActivate(context)
+        if (!valid) throw new UnauthorizedException()
+        const payload = context.switchToHttp().getRequest().user
+        const user = await this.usersService.findUserById(payload.id)
+        if (user == null || user.role !== 0) throw new UnauthorizedException()
+        return true
+    }
+
+}

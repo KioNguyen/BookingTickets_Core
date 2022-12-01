@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
+
 export interface IDetailEvent {
-    id: string;
+    id?: string;
     slug: string;
     name: string;
     description: string;

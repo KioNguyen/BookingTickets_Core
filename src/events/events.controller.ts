@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards, Put } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { isValidObjectId, Types } from 'mongoose';
@@ -23,13 +23,20 @@ export class EventsController {
   }
 
   @Get()
-  async getAllEvent() {
+  async getAllEvent(): Promise<IDetailEvent[]> {
     return await this.eventsService.getAllEvents();
   }
 
-  @ApiBadRequestResponse({ description: "User ID is not valid" })
+  @ApiBadRequestResponse({ description: "Event ID is not valid" })
+  @Put("/:id")
+  async updateEvent(@Param("id") id: Types.ObjectId, @Body() event: IDetailEvent): Promise<IDetailEvent> {
+    Utils.idValidObjectId(id)
+    return await this.eventsService.updateEvent(id, event);
+  }
+
+  @ApiBadRequestResponse({ description: "Event ID is not valid" })
   @Delete("/:id")
-  async deleteUser(@Param("id") id: Types.ObjectId) {
+  async deleteEvent(@Param("id") id: Types.ObjectId) {
     Utils.idValidObjectId(id)
     return await this.eventsService.removeEvent(id);
   }

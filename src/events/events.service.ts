@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { EventsRepository } from './events.repository';
 import { EventDocument } from './_schemas/event.schema';
@@ -11,16 +11,21 @@ export class EventsService {
   constructor(private readonly eventsRepository: EventsRepository) { }
 
 
-  _getEventDetails({ id, slug, name, description, poster, start_date, end_date, published }: EventDocument): IDetailEvent {
+  _getEventDetails({ id, slug, name, description, poster, start_date, end_date, published }: IDetailEvent): IDetailEvent {
     return { id, slug, name, description, poster, start_date, end_date, published };
   }
 
-  createEvent(eventInfor: CreateEventDTO): Promise<EventDocument> {
+  async createEvent(eventInfor: CreateEventDTO): Promise<IDetailEvent> {
     eventInfor.published = Utils.isPublishedEvent(eventInfor.end_date);
-    if (!Utils.isValidDateEvent(eventInfor.start_date, eventInfor.end_date)) {
-      throw new Error('Start date must be before end date')
-    }
-    const event = this.eventsRepository.createOne(eventInfor);
+    Utils.isValidDateEvent(eventInfor.start_date, eventInfor.end_date);
+    const event = await this.eventsRepository.createOne(eventInfor);
+    return event;
+  }
+
+  async updateEvent(id: Types.ObjectId, eventInfor: IDetailEvent): Promise<IDetailEvent> {
+    eventInfor.published = Utils.isPublishedEvent(eventInfor.end_date);
+    Utils.isValidDateEvent(eventInfor.start_date, eventInfor.end_date);
+    const event = await this.eventsRepository.findOneAndUpdate(id, eventInfor);
     return event;
   }
 
@@ -40,7 +45,7 @@ export class EventsService {
   async findEventBySlug(email: string): Promise<EventDocument> {
     const event = this.eventsRepository.findOne(email);
     if (!event) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Event not found');
     }
     return event;
   }

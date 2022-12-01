@@ -1,6 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateEventDTO } from './dto/create-event.dto';
+import { IDetailEvent } from './interface/event-details.interface';
 import { EventDocument } from './_schemas/event.schema';
 
 
@@ -10,9 +11,9 @@ export class EventsRepository {
     private eventModel: Model<EventDocument>,
   ) { }
 
-  async createOne(event: CreateEventDTO): Promise<EventDocument> {
-    const newEvent = new this.eventModel(event);
-    return newEvent.save();
+  async createOne(event: CreateEventDTO): Promise<IDetailEvent> {
+    const newEvent = await this.eventModel.create(event);
+    return newEvent;
   }
 
 
@@ -27,13 +28,17 @@ export class EventsRepository {
     return result;
   }
 
-  async getAll(): Promise<any> {
+  async getAll(): Promise<EventDocument[]> {
     const result = await this.eventModel.find({});
     return result;
   }
 
-  async findOne(email): Promise<any> {
+  async findOne(email: string): Promise<any> {
     const result = await this.eventModel.findOne({ email: email });
+    return result;
+  }
+  async findOneAndUpdate(id: Types.ObjectId, eventInfor: IDetailEvent): Promise<IDetailEvent> {
+    const result = await this.eventModel.findByIdAndUpdate(id, eventInfor, { new: true });
     return result;
   }
 }

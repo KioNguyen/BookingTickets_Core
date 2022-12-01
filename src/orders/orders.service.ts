@@ -25,8 +25,8 @@ export class OrdersService {
     Utils.idValidObjectId(orderInfor.event);
     Utils.idValidObjectId(orderInfor.ticket);
     const ticket = await this.ticketsService.findTicketById(orderInfor.ticket);
-    if (ticket.total_quantity <= 0) {
-      throw new HttpException(`Ticket with id ${orderInfor.ticket} has no quantity`, HttpStatus.FORBIDDEN);
+    if (ticket.available_quantity < orderInfor.quantity || ticket.available_quantity <= 0) {
+      throw new HttpException(`Ticket with id ${orderInfor.ticket} isn't enough quantity`, HttpStatus.FORBIDDEN);
     }
     const event = await this.eventsService.findEventById(orderInfor.event);
     if (!Utils.isPublishedEvent(event.end_date)) {

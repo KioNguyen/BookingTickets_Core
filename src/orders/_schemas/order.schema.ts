@@ -19,7 +19,10 @@ export class Order extends mongoose.Schema {
   purchase_date: string;
 
   @Prop()
-  total_price: number;
+  total_price: number = 0;
+
+  @Prop({ required: true, min: 1 })
+  quantity: number = 0;
 
   @Prop()
   status: number = 0;

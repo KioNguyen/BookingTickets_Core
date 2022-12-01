@@ -34,6 +34,11 @@ export class CreateOrderDTO {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsNumber()
+  quantity: number = 0;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsNumber({})
   status: number = 0;
 

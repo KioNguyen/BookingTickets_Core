@@ -6,6 +6,7 @@ import { isValidObjectId, Types } from 'mongoose';
 import { AdminGuard, JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import * as Utils from 'src/utils/utils';
 import { IDetailUser } from './entities/user-details.entity';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @Controller('api/users')
@@ -42,7 +43,7 @@ export class UsersController {
   @UseGuards(AdminGuard)
   @ApiBadRequestResponse({ description: "User ID is not valid" })
   @Put("/:id")
-  async updateUser(@Param("id") id: Types.ObjectId, @Body() userInfor: CreateUserDTO): Promise<CreateUserDTO | null> {
+  async updateUser(@Param("id") id: Types.ObjectId, @Body() userInfor: UpdateUserDTO): Promise<CreateUserDTO | null> {
     Utils.idValidObjectId(id)
     return await this.usersService.updateUser(id, userInfor);
   }

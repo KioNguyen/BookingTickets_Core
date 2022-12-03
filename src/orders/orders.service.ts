@@ -29,7 +29,7 @@ export class OrdersService {
       throw new HttpException(`Ticket with id ${orderInfor.ticket} isn't enough quantity`, HttpStatus.FORBIDDEN);
     }
     const event = await this.eventsService.findEventById(orderInfor.event);
-    if (!Utils.isPublishedEvent(event.end_date)) {
+    if (!Utils.isPublishedEvent(event.start_date, event.end_date)) {
       throw new HttpException(`Event with id ${orderInfor.event} is out of day`, HttpStatus.FORBIDDEN);
     }
     const order = await this.ordersRepository.createOne(orderInfor);

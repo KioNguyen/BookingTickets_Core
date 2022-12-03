@@ -9,10 +9,11 @@ export const idValidObjectId = (id: Types.ObjectId): boolean => {
     return true;
 }
 
-export const isPublishedEvent = (end_date: string): boolean => {
+export const isPublishedEvent = (start_date: string, end_date: string): boolean => {
     const sNowTime = new Date().getTime();
+    const sStartTime = new Date(start_date).getTime();
     const sEndTime = new Date(end_date).getTime();
-    return sEndTime - sNowTime >= 0;
+    return sEndTime - sNowTime >= 0 && sNowTime - sStartTime >= 0;
 }
 
 export const isValidDateEvent = (start_date: string, end_date: string): boolean => {

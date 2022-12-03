@@ -16,14 +16,14 @@ export class EventsService {
   }
 
   async createEvent(eventInfor: CreateEventDTO): Promise<IDetailEvent> {
-    eventInfor.published = Utils.isPublishedEvent(eventInfor.end_date);
+    eventInfor.published = Utils.isPublishedEvent(eventInfor.start_date, eventInfor.end_date);
     Utils.isValidDateEvent(eventInfor.start_date, eventInfor.end_date);
     const event = await this.eventsRepository.createOne(eventInfor);
     return event;
   }
 
   async updateEvent(id: Types.ObjectId, eventInfor: IDetailEvent): Promise<IDetailEvent> {
-    eventInfor.published = Utils.isPublishedEvent(eventInfor.end_date);
+    eventInfor.published = eventInfor.published ? eventInfor.published : Utils.isPublishedEvent(eventInfor.start_date, eventInfor.end_date);
     Utils.isValidDateEvent(eventInfor.start_date, eventInfor.end_date);
     const event = await this.eventsRepository.findOneAndUpdate(id, eventInfor);
     if (!event) {
@@ -73,7 +73,8 @@ export class EventsService {
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   updatePublishAllEvent() {
     const nowDate = new Date().toISOString();
+    this.eventsRepository.updateMany({ start_date: { $gt: nowDate } }, { published: false });
     this.eventsRepository.updateMany({ end_date: { $lt: nowDate } }, { published: false });
-    this.eventsRepository.updateMany({ start_date: { $lt: nowDate, end_date: { $lt: nowDate } } }, { published: true });
+    this.eventsRepository.updateMany({ start_date: { $lt: nowDate }, end_date: { $gt: nowDate } }, { published: true });
   }
 }

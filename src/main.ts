@@ -9,7 +9,8 @@ async function bootstrap() {
     origin: [
       "http://localhost:3000",
       "http://127.0.0.1:5173",
-      "https://clinquant-kitten-5e218f.netlify.app"
+      "https://clinquant-kitten-5e218f.netlify.app",
+      "https://taupe-moxie-ff51bb.netlify.app"
     ]
   }
   const app = await NestFactory.create(AppModule, { cors: corsOptions });

@@ -15,7 +15,6 @@ export class OrdersController {
   ) { }
 
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AdminGuard)
   @Post()
   async createOrder(@Body() order: CreateOrderDTO): Promise<CreateOrderDTO> {
     let newOrder = await this.ordersService.createOrder(order);
@@ -37,7 +36,6 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @UseGuards(AdminGuard)
   @ApiBadRequestResponse({ description: "Order ID is not valid" })
   @Put("/:id")
   async updateOrder(@Param("id") id: Types.ObjectId, @Body() order: CreateOrderDTO): Promise<CreateOrderDTO> {

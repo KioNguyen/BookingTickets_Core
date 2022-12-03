@@ -48,6 +48,12 @@ export class TicketsService {
     return tickets;
   }
 
+
+  async getTicketsByEvent(id: Types.ObjectId): Promise<TicketDocument[]> {
+    const tickets = await this.ticketsRepository.getWithConditions({ event: id });
+    return tickets;
+  }
+
   async removeTicket(_id: Types.ObjectId): Promise<any> {
     const ticket = await this.ticketsRepository.findById(_id);
     if (!ticket) {

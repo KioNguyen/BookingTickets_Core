@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards, Put } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards, Put, Query } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { isValidObjectId, Types } from 'mongoose';
@@ -6,6 +6,7 @@ import { JwtAuthGuard, AdminGuard } from 'src/auth/guards/jwt.guard';
 import * as Utils from 'src/utils/utils';
 import { CreateTicketDTO } from './dto/create-ticket.dto';
 import { IDetailTicket } from './interface/ticket-details.interface';
+import e from 'express';
 
 @ApiTags('Tickets')
 @Controller('api/tickets')
@@ -22,8 +23,19 @@ export class TicketsController {
     return this.ticketsService._getTicketDetails(newTicket);
   }
 
+  // @Get()
+  // async getAllTicket(): Promise<IDetailTicket[]> {
+  //   return await this.ticketsService.getAllTickets();
+  // }
+
   @Get()
-  async getAllTicket(): Promise<IDetailTicket[]> {
+  async getTicketByEvent(@Query() query: any): Promise<IDetailTicket[]> {
+    if (Object.keys(query).length > 0) {
+      if (query.event) {
+        Utils.idValidObjectId(query.event)
+        return await this.ticketsService.getTicketsByEvent(query.event);
+      }
+    }
     return await this.ticketsService.getAllTickets();
   }
 

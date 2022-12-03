@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   async register(user: Readonly<CreateUserDTO>): Promise<IDetailUser | any> {
-    const { fullname, email, password, phone, role } = user;
+    const { fullname, email, password, phone, role, status } = user;
 
     const existingUser = await this.userService.findUserByEmail(email);
 
@@ -33,7 +33,7 @@ export class AuthService {
       );
 
     const hashedPassword = await this.hashPassword(password);
-    const newUserDTO = { fullname, email, password: hashedPassword, phone, role };
+    const newUserDTO = { fullname, email, password: hashedPassword, phone, role, status };
     const newUser = await this.userService.createUser(newUserDTO);
     return this.userService._getUserDetails(newUser);
   }

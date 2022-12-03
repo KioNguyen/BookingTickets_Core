@@ -20,6 +20,9 @@ export class User extends mongoose.Schema {
 
   @Prop()
   role: number; //0: admin_user; 1: normal_user
+
+  @Prop()
+  status: number; //0: disable; 1: active
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

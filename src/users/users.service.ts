@@ -10,19 +10,21 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) { }
 
   createUser(userInfor: CreateUserDTO): Promise<UserDocument> {
+    userInfor.status = userInfor.status || 1
     const user = this.usersRepository.createOne(userInfor);
     return user;
   }
 
 
 
-  _getUserDetails({ id, fullname, email, phone, role }: UserDocument): IDetailUser {
+  _getUserDetails({ id, fullname, email, phone, role, status }: UserDocument): IDetailUser {
     return {
       id,
       fullname,
       email,
       phone,
-      role
+      role,
+      status
     };
   }
 
@@ -54,6 +56,17 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    return user;
+  }
+
+
+
+  async updateUser(id: Types.ObjectId, userInfor: CreateUserDTO): Promise<CreateUserDTO> {
+    const user = await this.usersRepository.findOneAndUpdate(id, userInfor);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return user;
   }
 

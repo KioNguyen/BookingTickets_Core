@@ -6,7 +6,8 @@ export class UserDo {
   phone: string;
   password: string;
   fullname: string;
-  role: string;
+  role: number;
+  status: number;
 
   constructor(props: Partial<UserDo>) {
     this._id = props._id;
@@ -15,6 +16,7 @@ export class UserDo {
     this.password = props.password || null;
     this.fullname = props.fullname || null;
     this.role = props.role || null;
+    this.status = props.status || null;
   }
 
 

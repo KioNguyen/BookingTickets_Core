@@ -4,5 +4,6 @@ export interface ILoginDetail {
     email: string;
     phone: string;
     role: number;
+    status: number; //0: disabled, 1: active
     apiToken: string;
 }

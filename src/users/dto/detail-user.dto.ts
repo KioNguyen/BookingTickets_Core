@@ -29,4 +29,8 @@ export class DetailUserDTO {
   @IsNotEmpty()
   @IsNumber()
   role: number = 1;
+
+  @ApiProperty()
+  @IsNumber()
+  status: number = 1;
 }

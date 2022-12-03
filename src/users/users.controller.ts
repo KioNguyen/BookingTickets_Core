@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { isValidObjectId, Types } from 'mongoose';
 import { AdminGuard, JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import * as Utils from 'src/utils/utils';
+import { IDetailUser } from './entities/user-details.entity';
 
 @ApiTags('Users')
 @Controller('api/users')
@@ -35,5 +36,14 @@ export class UsersController {
   async deleteUser(@Param("id") id: Types.ObjectId) {
     Utils.idValidObjectId(id)
     return await this.usersService.removeUser(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminGuard)
+  @ApiBadRequestResponse({ description: "User ID is not valid" })
+  @Put("/:id")
+  async updateUser(@Param("id") id: Types.ObjectId, @Body() userInfor: CreateUserDTO): Promise<CreateUserDTO | null> {
+    Utils.idValidObjectId(id)
+    return await this.usersService.updateUser(id, userInfor);
   }
 }

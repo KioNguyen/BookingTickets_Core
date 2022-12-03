@@ -1,3 +1,4 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UserDo } from 'src/users/_schemas/user.do';
@@ -37,5 +38,17 @@ export class UsersRepository {
   async findOne(email): Promise<any> {
     const result = await this.userModel.findOne({ email: email });
     return result;
+  }
+
+  async findOneAndUpdate(id: Types.ObjectId, UserInfor: CreateUserDTO): Promise<UserDocument> {
+    try {
+      const result = await this.userModel.findByIdAndUpdate(id, UserInfor, { new: true });
+      return result;
+    } catch (error) {
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: error.message,
+      }, HttpStatus.FORBIDDEN);
+    }
   }
 }

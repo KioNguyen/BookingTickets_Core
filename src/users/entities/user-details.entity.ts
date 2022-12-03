@@ -4,4 +4,5 @@ export interface IDetailUser {
     email: string;
     phone: string;
     role: number;
+    status: number;
 }

@@ -7,13 +7,19 @@ import { IDetailOrder } from './interface/order-details.interface';
 import { TicketsService } from 'src/tickets/tickets.service';
 import { EventsService } from 'src/events/events.service';
 import * as Utils from '../utils/utils'
+import { IDetailUser } from 'src/users/entities/user-details.entity';
+import { UsersService } from 'src/users/users.service';
+import { UserDocument } from 'src/users/_schemas/user.schema';
+import { TicketDocument } from 'src/tickets/_schemas/ticket.schema';
+import { IDetailTicket } from 'src/tickets/interface/ticket-details.interface';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly ticketsService: TicketsService,
-    private readonly eventsService: EventsService
+    private readonly eventsService: EventsService,
+    private userService: UsersService,
   ) { }
 
   _getOrderDetails(createOrderDTO: CreateOrderDTO): CreateOrderDTO {
@@ -52,9 +58,23 @@ export class OrdersService {
     return order;
   }
 
-  async getAllOrders(): Promise<OrderDocument[]> {
-    const orders = await this.ordersRepository.getAll();
-    return orders;
+  async getAllOrders(filter): Promise<any[]> {
+    const orders = await this.ordersRepository.getAll(filter);
+    const resp = []
+    for await (const order of orders) {
+      let user = await this.userService.findUserByIdDetail(<Types.ObjectId>order.owner)
+      if (user) {
+        user = await this.userService._getUserDetails(<UserDocument>user)
+        order.owner = <IDetailUser>user;
+      }
+      let ticket = await this.ticketsService.findTicketById(<Types.ObjectId>order.ticket)
+      if (ticket) {
+        ticket = await this.ticketsService._getTicketDetails(<TicketDocument>ticket)
+        order.ticket = <IDetailTicket>ticket;
+      }
+      resp.push(order)
+    }
+    return resp;
   }
 
   async removeOrder(_id: Types.ObjectId): Promise<any> {
@@ -74,7 +94,7 @@ export class OrdersService {
   }
 
 
-  async getOrder(_id: Types.ObjectId): Promise<OrderDocument> {
+  async getOrder(_id: Types.ObjectId): Promise<IDetailOrder> {
     const order = await this.findOrderById(_id);
     if (!order) {
       throw new NotFoundException('Order not found');
@@ -82,7 +102,7 @@ export class OrdersService {
     return order;
   }
 
-  async findOrderById(_id: Types.ObjectId): Promise<OrderDocument> {
+  async findOrderById(_id: Types.ObjectId): Promise<IDetailOrder> {
     const order = await this.ordersRepository.findById(_id);
     if (!order) {
       throw new NotFoundException('Order not found');

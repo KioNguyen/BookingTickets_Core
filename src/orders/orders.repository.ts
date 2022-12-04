@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateOrderDTO } from './dto/create-order.dto';
 import { IDetailOrder } from './interface/order-details.interface';
+import { IDetailOrderWithUser } from './interface/order-user-detail.interface';
 import { OrderDocument } from './_schemas/order.schema';
 
 
@@ -12,10 +13,10 @@ export class OrdersRepository {
     private orderModel: Model<OrderDocument>,
   ) { }
 
-  async createOne(order: CreateOrderDTO): Promise<CreateOrderDTO> {
+  async createOne(order: CreateOrderDTO): Promise<IDetailOrder> {
     try {
       const newOrder = await this.orderModel.create(order);
-      return newOrder;
+      return <IDetailOrder>newOrder;
     } catch (error) {
       throw new HttpException({
         status: HttpStatus.FORBIDDEN,
@@ -36,20 +37,20 @@ export class OrdersRepository {
     return result;
   }
 
-  async getAll(): Promise<OrderDocument[]> {
-    const result = await this.orderModel.find({});
-    return result;
+  async getAll(filter): Promise<IDetailOrderWithUser[]> {
+    const result = await this.orderModel.find(filter);
+    return <IDetailOrderWithUser[]>result;
   }
 
   async findOne(email: string): Promise<any> {
     const result = await this.orderModel.findOne({ email: email });
     return result;
   }
-  async findOneAndUpdate(id: Types.ObjectId, orderInfor: CreateOrderDTO): Promise<CreateOrderDTO> {
+  async findOneAndUpdate(id: Types.ObjectId, orderInfor: CreateOrderDTO): Promise<IDetailOrder> {
 
     try {
       const result = await this.orderModel.findByIdAndUpdate(id, orderInfor, { new: true });
-      return result;
+      return <IDetailOrder>result;
     } catch (error) {
       throw new HttpException({
         status: HttpStatus.FORBIDDEN,

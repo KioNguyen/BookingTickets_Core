@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { UserDo } from 'src/users/_schemas/user.do';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { DetailUserDTO } from './dto/detail-user.dto';
+import { IDetailUser } from './entities/user-details.entity';
 import { UserDocument } from './_schemas/user.schema';
 
 
@@ -22,6 +21,11 @@ export class UsersRepository {
   async findUserById(_id: Types.ObjectId): Promise<any> {
     const result = this.userModel.findById(_id);
     return result;
+  }
+
+  async findUserByIdDetail(_id: Types.ObjectId): Promise<IDetailUser> {
+    const result = await this.userModel.findById(_id);
+    return <IDetailUser>result;
   }
 
 

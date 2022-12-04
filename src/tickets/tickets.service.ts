@@ -71,7 +71,7 @@ export class TicketsService {
   }
 
 
-  async getTicket(_id: Types.ObjectId): Promise<TicketDocument> {
+  async getTicket(_id: Types.ObjectId): Promise<IDetailTicket> {
     const ticket = await this.findTicketById(_id);
     if (!ticket) {
       throw new NotFoundException('Ticket not found');
@@ -79,7 +79,7 @@ export class TicketsService {
     return ticket;
   }
 
-  async findTicketById(_id: Types.ObjectId): Promise<TicketDocument> {
+  async findTicketById(_id: Types.ObjectId): Promise<IDetailTicket> {
     const ticket = await this.ticketsRepository.findById(_id);
     if (!ticket) {
       throw new NotFoundException('Ticket not found');

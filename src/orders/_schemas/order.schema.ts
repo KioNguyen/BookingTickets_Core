@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { METHODS } from 'http';
 import mongoose, { Document, Types } from 'mongoose';
+import { IDetailUser } from 'src/users/entities/user-details.entity';
 
 export type OrderDocument = Order & Document;
 
 @Schema({ versionKey: false, timestamps: true })
 export class Order extends mongoose.Schema {
-  @Prop({ required: true })
-  owner: Types.ObjectId;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'Users' })
+  owner?: Types.ObjectId | IDetailUser;
 
   @Prop({ required: true })
   event: Types.ObjectId;

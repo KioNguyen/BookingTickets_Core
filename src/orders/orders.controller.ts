@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards, Put } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, BadRequestException, HttpException, HttpStatus, UseGuards, Put, Query } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { isValidObjectId, Types } from 'mongoose';
@@ -6,6 +6,7 @@ import { JwtAuthGuard, AdminGuard } from 'src/auth/guards/jwt.guard';
 import * as Utils from 'src/utils/utils';
 import { CreateOrderDTO } from './dto/create-order.dto';
 import { IDetailOrder } from './interface/order-details.interface';
+import { IDetailOrderWithUser } from './interface/order-user-detail.interface';
 
 @ApiTags('Orders')
 @Controller('api/orders')
@@ -23,14 +24,14 @@ export class OrdersController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getAllOrder(): Promise<CreateOrderDTO[]> {
-    return await this.ordersService.getAllOrders();
+  async getAllOrder(@Query() query: any): Promise<IDetailOrderWithUser[]> {
+    return await this.ordersService.getAllOrders(query);
   }
 
 
   @UseGuards(JwtAuthGuard)
   @Get("/:id")
-  async getOrder(@Param("id") id: Types.ObjectId): Promise<CreateOrderDTO> {
+  async getOrder(@Param("id") id: Types.ObjectId): Promise<IDetailOrder> {
     Utils.idValidObjectId(id)
     return await this.ordersService.getOrder(id);
   }

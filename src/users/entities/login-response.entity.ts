@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+
 export interface ILoginDetail {
-    id: string;
+    id: Types.ObjectId;
     fullname: string;
     email: string;
     phone: string;

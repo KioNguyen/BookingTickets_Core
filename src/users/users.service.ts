@@ -60,6 +60,13 @@ export class UsersService {
   }
 
 
+  async findUserByIdDetail(_id: Types.ObjectId): Promise<IDetailUser> {
+    const user = this.usersRepository.findUserByIdDetail(_id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
 
   async updateUser(id: Types.ObjectId, userInfor: CreateUserDTO): Promise<CreateUserDTO> {
     const user = await this.usersRepository.findOneAndUpdate(id, userInfor);
